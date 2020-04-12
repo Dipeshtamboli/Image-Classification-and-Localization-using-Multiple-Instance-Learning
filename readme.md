@@ -54,7 +54,7 @@ Comparison of the visualization output of GradCAM and A-MILAnother result of AM
 ***********************
 
 [Same article is also available on Medium](https://medium.com/@dipeshtamboli/a-sota-method-for-visualization-of-histopathology-images-1cc6cc3b76f3)   
-And also on [my blogs](https://dipeshtamboli.github.io/blog/2019/Visualization-of-Histopathology-images/)
+And also on [my blog](https://dipeshtamboli.github.io/blog/2019/Visualization-of-Histopathology-images/)
 
 <button style="background-color:azure;color:white;width:200px;
 height:40px;">[Arxiv link](https://arxiv.org/abs/2003.00823)</button> | <button style="background-color:azure;color:white;width:240px;
