@@ -1,3 +1,63 @@
+# Introduction
+Deep learning in histopathology has developed an interest over the decade due to its improvements in classification and localization tasks. Breast cancer is a prominent cause of death in women. 
+
+
+Computer-Aided Pathology is essential to analyze microscopic histopathology images for diagnosis with an
+increasing number of breast cancer patients. The convolutional neural network, a deep learning algorithm, provides significant results in classification among cancer and non-cancer tissue images but lacks in providing interpretation. Here in this blog, I am writing the streamlined version of the paper **"Breast cancer histopathology image classification and localization using multiple instance learning"** published in **WIECON-2019** in which we have aimed to provide a better interpretation of classification results by providing localization on microscopic histopathology images. We frame the image classification problem as weakly supervised multiple instance learning problems and use attention on instances to localize the tumour and normal regions in an image. **Attention-based multiple instance learning (A-MIL)** is applied on **BreakHis** and **BACH** datasets. The classification and visualization results are compared with other recent techniques. A method used in this paper produces better localization results without compromising classification accuracy.
+
+# About Grad-CAM Image Visualizations
+
+In the era of deep learning, understanding of the model's decision is important and the GradCAM is one of the first and good methods to visualize the outcome. Here is the paper and the following are the results taken from paper directly.
+
+<!--       <center> ![hey](/images/amil/grad_cam.png) </center>
+      <center>This is an image</center>
+ -->
+   	
+![Highlighting the part in the input image responsible for classification in that category. Image is taken from the paper directly.](/images/amil/grad_cam.png)
+
+Here, in the image, you can see the highlighted portion corresponding to the parts of the image which is responsible for the classification. Like in the first image of Torch, GradCAM is highlighting the portion in the image where the torch is present. Similarly, in the Car Mirror image, it's highlighting the portion where the car mirror is present. Thus this explains the reason behind the decision taken by the model.
+
+![This is the image where the model's output is the cat and GradCAM is highlighting the portion responsible for that decision. Image is taken from the paper directly.](/images/amil/dog.png)
+
+This is the image where the model's output is the cat and GradCAM is highlighting the portion responsible for that decision. Image is taken from the paper directly.Now, these are the results where we see that the GradCAM and Guided GradCAM gives us the portion which is important for decision making. But it doesn't work well on the medical images(especially Histopathology images).
+
+
+
+![GradCAM and Guided-GradCAM is not highlighting the useful portion of the image.](/images/amil/grad_amil.png)
+
+So we have proposed another visualization technique for it. It's an attention-based visualization method where we are doing multiple instance learning.
+
+# Attention-based multiple instance learning (A-MIL)
+
+In this method, we have cropped an image in small square patches and made a bag of it. This bag of images will act like a batch. We are fee
+AMIL ArchitectureFirst making a bag of the input image by taking the small patches from it.
+Passing it to the feature extractor which is basically a convolutional neural network block.
+Then we are passing the Instance level features to the classifier for getting Instance level attention.
+Here we are getting the attention weights which we are further using for attention aggregation to get the bag level features.
+
+![The figure shows localization in sample malignant image using Attention - Multiple Instance Learning. A-MIL accurately highlights affected gland and ignores background region](/images/amil/amil_arc.png)
+
+
+Then we are applying Dense layer for the classification of the Benign, Malignant or Invasiveconsidering the
+
+So in the end, we have cropped image patches and their attention weights. We multiplied each attention weight with the corresponding patch and stitch the whole image to get the visualization of the complete input image. With this method, we are neither compromising the accuracy nor made the model complicated. This is just adding transparency to the whole process.
+
+![The figure shows localization in sample malignant image using Attention - Multiple Instance Learning. A-MIL accurately highlights affected gland and ignores background region](/images/amil/amil.png)
+
+
+This is the comparison between the visualization of GradCAM and AMIL method. Here we cropped two portions from the image which is important for the classification and applied GradCAM on it. In another scene, AMIL visualization is there which is properly highlighting the useful portion.
+Comparison of the visualization output of GradCAM and A-MILAnother result of AMIL visualization of BACH image.
+
+
+![Another result from the BACH dataset.](/images/amil/result.png)
+
+***********************
+
+[Same article is also available on Medium](https://medium.com/@dipeshtamboli/a-sota-method-for-visualization-of-histopathology-images-1cc6cc3b76f3)
+
+
+# How to run the code
+
 Here, in the folder AMIL_project, we have following folders:
 
 ## my_network
