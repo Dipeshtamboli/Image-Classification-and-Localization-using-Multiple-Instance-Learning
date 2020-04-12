@@ -1,13 +1,105 @@
 Here, in the folder AMIL_project, we have following folders:
 ## Kaggle_Data:
 we are using Breakhis dataset from the Kaggle datasets(link to the dataset)   
--download the dataset from the following link:   
+-download the dataset from the following link:1
 [Kaggle Dataset](https://www.kaggle.com/kritika397/breast-cancer-dataset-from-breakhis/downloads/fold1.zip/1)  
 -rename it to Kaggle_Data   
 -We will use this data for Resnet architecture, vgg architecture and mynet architecture   
 
 ## AMIL_Data:
 	-Here, for attention based multiple instance learning, we will re-arrange the dataset in the given format(readme_data_format.txt)
+
+###	Here, dataset is in this structure:
+		fold1
+			-test
+				-100X
+					-B_100X
+						-(images)
+					-M_100X
+						-(images)
+				-200X
+					-B_200X
+						-(images)
+					-M_200X
+						-(images)
+				-400X
+					-B_400X
+						-(images)
+					-M_400X
+						-(images)
+				-40X
+					-B_40X
+						-(images)
+					-M_40X
+						-(images)
+			-train
+				-100X
+					-B_100X
+						-(images)
+					-M_100X
+						-(images)
+				-200X
+					-B_200X
+						-(images)
+					-M_200X
+						-(images)
+				-400X
+					-B_400X
+						-(images)
+					-M_400X
+						-(images)
+				-40X
+					-B_40X
+						-(images)
+					-M_40X
+						-(images)
+
+###	Now, we have to convert it in the following format:
+		data_breakhis
+			-100X
+				-train
+					-0
+						-images
+					-1
+						-images
+				-test
+					-0
+						-images
+					-1
+						-images				
+			-200X
+				-train
+					-0
+						-images
+					-1
+						-images
+				-test
+					-0
+						-images
+					-1
+						-images							
+			-400X
+				-train
+					-0
+						-images
+					-1
+						-images
+				-test
+					-0
+						-images
+					-1
+						-images							
+			-40X
+				-train
+					-0
+						-images
+					-1
+						-images
+				-test
+					-0
+						-images
+					-1
+						-images							
 	-rearrange the folders and rename it to AMIL_Data
 
 ## my_network
