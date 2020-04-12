@@ -13,17 +13,17 @@ In the era of deep learning, understanding of the model's decision is important 
       <center>This is an image</center>
  -->
    	
-![Highlighting the part in the input image responsible for classification in that category. Image is taken from the paper directly.](/images/amil/grad_cam.png)
+![Highlighting the part in the input image responsible for classification in that category. Image is taken from the paper directly.](https://dipeshtamboli.github.io/images/amil/grad_cam.png)
 
 Here, in the image, you can see the highlighted portion corresponding to the parts of the image which is responsible for the classification. Like in the first image of Torch, GradCAM is highlighting the portion in the image where the torch is present. Similarly, in the Car Mirror image, it's highlighting the portion where the car mirror is present. Thus this explains the reason behind the decision taken by the model.
 
-![This is the image where the model's output is the cat and GradCAM is highlighting the portion responsible for that decision. Image is taken from the paper directly.](/images/amil/dog.png)
+![This is the image where the model's output is the cat and GradCAM is highlighting the portion responsible for that decision. Image is taken from the paper directly.](https://dipeshtamboli.github.io/images/amil/dog.png)
 
 This is the image where the model's output is the cat and GradCAM is highlighting the portion responsible for that decision. Image is taken from the paper directly.Now, these are the results where we see that the GradCAM and Guided GradCAM gives us the portion which is important for decision making. But it doesn't work well on the medical images(especially Histopathology images).
 
 
 
-![GradCAM and Guided-GradCAM is not highlighting the useful portion of the image.](/images/amil/grad_amil.png)
+![GradCAM and Guided-GradCAM is not highlighting the useful portion of the image.](https://dipeshtamboli.github.io/images/amil/grad_amil.png)
 
 So we have proposed another visualization technique for it. It's an attention-based visualization method where we are doing multiple instance learning.
 
@@ -35,21 +35,21 @@ Passing it to the feature extractor which is basically a convolutional neural ne
 Then we are passing the Instance level features to the classifier for getting Instance level attention.
 Here we are getting the attention weights which we are further using for attention aggregation to get the bag level features.
 
-![The figure shows localization in sample malignant image using Attention - Multiple Instance Learning. A-MIL accurately highlights affected gland and ignores background region](/images/amil/amil_arc.png)
+![The figure shows localization in sample malignant image using Attention - Multiple Instance Learning. A-MIL accurately highlights affected gland and ignores background region](https://dipeshtamboli.github.io/images/amil/amil_arc.png)
 
 
 Then we are applying Dense layer for the classification of the Benign, Malignant or Invasiveconsidering the
 
 So in the end, we have cropped image patches and their attention weights. We multiplied each attention weight with the corresponding patch and stitch the whole image to get the visualization of the complete input image. With this method, we are neither compromising the accuracy nor made the model complicated. This is just adding transparency to the whole process.
 
-![The figure shows localization in sample malignant image using Attention - Multiple Instance Learning. A-MIL accurately highlights affected gland and ignores background region](/images/amil/amil.png)
+![The figure shows localization in sample malignant image using Attention - Multiple Instance Learning. A-MIL accurately highlights affected gland and ignores background region](https://dipeshtamboli.github.io/images/amil/amil.png)
 
 
 This is the comparison between the visualization of GradCAM and AMIL method. Here we cropped two portions from the image which is important for the classification and applied GradCAM on it. In another scene, AMIL visualization is there which is properly highlighting the useful portion.
 Comparison of the visualization output of GradCAM and A-MILAnother result of AMIL visualization of BACH image.
 
 
-![Another result from the BACH dataset.](/images/amil/result.png)
+![Another result from the BACH dataset.](https://dipeshtamboli.github.io/images/amil/result.png)
 
 ***********************
 
