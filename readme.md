@@ -242,3 +242,12 @@ we are using Breakhis dataset from the Kaggle datasets(link to the dataset)
 					-1
 						-images							
 	-rearrange the folders and rename it to AMIL_Data
+
+
+************************************************
+To cite this:   
+Plain Text:   
+A. Patil, D. Tamboli, S. Meena, D. Anand and A. Sethi, "Breast Cancer Histopathology Image Classification and Localization using Multiple Instance Learning," 2019 IEEE International WIE Conference on Electrical and Computer Engineering (WIECON-ECE), Bangalore, India, 2019, pp. 1-4.
+
+BibTex:
+@INPROCEEDINGS{9019916,  author={A. {Patil} and D. {Tamboli} and S. {Meena} and D. {Anand} and A. {Sethi}},  booktitle={2019 IEEE International WIE Conference on Electrical and Computer Engineering (WIECON-ECE)},  title={Breast Cancer Histopathology Image Classification and Localization using Multiple Instance Learning},   year={2019},  volume={},  number={},  pages={1-4},}
