@@ -57,8 +57,8 @@ Comparison of the visualization output of GradCAM and A-MILAnother result of AM
 And also on [my blogs](https://dipeshtamboli.github.io/blog/2019/Visualization-of-Histopathology-images/)
 
 <button style="background-color:azure;color:white;width:200px;
-height:40px;">[Arxiv link](https://arxiv.org/abs/2003.00823)</button> <button style="background-color:azure;color:white;width:240px;
-height:40px;">[IEEE Xplore link](https://ieeexplore.ieee.org/abstract/document/9019916)</button> <button style="background-color:azure;color:white;width:300px;
+height:40px;">[Arxiv link](https://arxiv.org/abs/2003.00823)</button> | <button style="background-color:azure;color:white;width:240px;
+height:40px;">[IEEE Xplore link](https://ieeexplore.ieee.org/abstract/document/9019916)</button> | <button style="background-color:azure;color:white;width:300px;
 height:40px;">[Harvard digital library link](https://ui.adsabs.harvard.edu/abs/2020arXiv200300823P/abstract)</button>
 
 # How to run the code
