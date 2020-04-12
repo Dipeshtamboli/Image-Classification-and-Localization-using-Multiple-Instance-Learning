@@ -1,0 +1,97 @@
+##################################################################################################
+AMIL_Data
+##################################################################################################
+	we are using Breakhis dataset from the Kaggle datasets(link to the dataset)
+=>	https://www.kaggle.com/kritika397/breast-cancer-dataset-from-breakhis/downloads/fold1.zip/1
+--------------------------------------------------------------------------------------------------
+	Here, dataset is in this structure:
+		fold1
+			-test
+				-100X
+					-B_100X
+						-(images)
+					-M_100X
+						-(images)
+				-200X
+					-B_200X
+						-(images)
+					-M_200X
+						-(images)
+				-400X
+					-B_400X
+						-(images)
+					-M_400X
+						-(images)
+				-40X
+					-B_40X
+						-(images)
+					-M_40X
+						-(images)
+			-train
+				-100X
+					-B_100X
+						-(images)
+					-M_100X
+						-(images)
+				-200X
+					-B_200X
+						-(images)
+					-M_200X
+						-(images)
+				-400X
+					-B_400X
+						-(images)
+					-M_400X
+						-(images)
+				-40X
+					-B_40X
+						-(images)
+					-M_40X
+						-(images)
+
+	Now, we have to convert it in the following format:
+		data_breakhis
+			-100X
+				-train
+					-0
+						-images
+					-1
+						-images
+				-test
+					-0
+						-images
+					-1
+						-images				
+			-200X
+				-train
+					-0
+						-images
+					-1
+						-images
+				-test
+					-0
+						-images
+					-1
+						-images							
+			-400X
+				-train
+					-0
+						-images
+					-1
+						-images
+				-test
+					-0
+						-images
+					-1
+						-images							
+			-40X
+				-train
+					-0
+						-images
+					-1
+						-images
+				-test
+					-0
+						-images
+					-1
+						-images							
