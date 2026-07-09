@@ -1,253 +1,114 @@
-# Introduction
-Deep learning in histopathology has developed an interest over the decade due to its improvements in classification and localization tasks. Breast cancer is a prominent cause of death in women. 
+# Breast Cancer Histopathology Image Classification and Localization using Multiple Instance Learning
 
+Official implementation of **"Breast Cancer Histopathology Image Classification and Localization using Multiple Instance Learning"**, published at **WIECON-ECE 2019**.
 
-Computer-Aided Pathology is essential to analyze microscopic histopathology images for diagnosis with an
-increasing number of breast cancer patients. The convolutional neural network, a deep learning algorithm, provides significant results in classification among cancer and non-cancer tissue images but lacks in providing interpretation. Here in this blog, I am writing the streamlined version of the paper **"Breast cancer histopathology image classification and localization using multiple instance learning"** published in **WIECON-2019** in which we have aimed to provide a better interpretation of classification results by providing localization on microscopic histopathology images. We frame the image classification problem as weakly supervised multiple instance learning problems and use attention on instances to localize the tumour and normal regions in an image. **Attention-based multiple instance learning (A-MIL)** is applied on **BreakHis** and **BACH** datasets. The classification and visualization results are compared with other recent techniques. A method used in this paper produces better localization results without compromising classification accuracy.
+[![arXiv](https://img.shields.io/badge/arXiv-2003.00823-b31b1b.svg)](https://arxiv.org/abs/2003.00823)
+[![IEEE Xplore](https://img.shields.io/badge/IEEE%20Xplore-9019916-00629b.svg)](https://ieeexplore.ieee.org/abstract/document/9019916)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-# About Grad-CAM Image Visualizations
+## Introduction
 
-In the era of deep learning, understanding of the model's decision is important and the GradCAM is one of the first and good methods to visualize the outcome. Here is the paper and the following are the results taken from paper directly.
+Deep learning in histopathology has attracted growing interest over the past decade thanks to its improvements on classification and localization tasks. Breast cancer is a prominent cause of death in women, and Computer-Aided Pathology is essential to analyze microscopic histopathology images for diagnosis given the increasing number of patients.
 
-<!--       <center> ![hey](/images/amil/grad_cam.png) </center>
-      <center>This is an image</center>
- -->
-   	
-![Highlighting the part in the input image responsible for classification in that category. Image is taken from the paper directly.](https://dipeshtamboli.github.io/images/amil/grad_cam.png)
+Convolutional neural networks give strong results in classifying cancer vs. non-cancer tissue images, but lack interpretability. In this work we frame image classification as a **weakly-supervised multiple instance learning (MIL)** problem and use **attention over instances (patches)** to localize tumour and normal regions — providing a better interpretation of the classification results. **Attention-based multiple instance learning (A-MIL)** is applied on the **BreakHis** and **BACH** datasets, and produces better localization without compromising classification accuracy.
 
-Here, in the image, you can see the highlighted portion corresponding to the parts of the image which is responsible for the classification. Like in the first image of Torch, GradCAM is highlighting the portion in the image where the torch is present. Similarly, in the Car Mirror image, it's highlighting the portion where the car mirror is present. Thus this explains the reason behind the decision taken by the model.
+## Grad-CAM and its limits on histopathology
 
-![This is the image where the model's output is the cat and GradCAM is highlighting the portion responsible for that decision. Image is taken from the paper directly.](https://dipeshtamboli.github.io/images/amil/dog.png)
+Grad-CAM and Guided Grad-CAM are among the most popular methods for visualizing which regions a CNN uses for its prediction. Using the code in [`grad_cam/`](grad_cam), here is Guided Grad-CAM applied to a BreakHis patch:
 
-This is the image where the model's output is the cat and GradCAM is highlighting the portion responsible for that decision. Image is taken from the paper directly.Now, these are the results where we see that the GradCAM and Guided GradCAM gives us the portion which is important for decision making. But it doesn't work well on the medical images(especially Histopathology images).
+<table>
+  <tr>
+    <td align="center"><b>Input patch</b><br><img src="images/gradcam_input.png" width="220" alt="Input histopathology patch"></td>
+    <td align="center"><b>Guided Grad-CAM</b><br><img src="images/gradcam_output.jpg" width="220" alt="Guided Grad-CAM output"></td>
+  </tr>
+</table>
 
+On natural images Grad-CAM localizes objects cleanly, but on H&E histopathology the attribution is **diffuse and noisy** — it does not isolate the diagnostically-relevant glands. This motivates an attention-based approach.
 
+## Attention-based Multiple Instance Learning (A-MIL)
 
-![GradCAM and Guided-GradCAM is not highlighting the useful portion of the image.](https://dipeshtamboli.github.io/images/amil/grad_amil.png)
+We crop each image into small patches to form a **bag**, extract per-patch (instance) features with a CNN, compute an **attention weight** for each patch, and aggregate the patches into a bag-level feature for classification (Benign / Malignant / Invasive):
 
-So we have proposed another visualization technique for it. It's an attention-based visualization method where we are doing multiple instance learning.
+<p align="center"><img src="images/amil_arc.png" width="360" alt="A-MIL architecture"></p>
 
-# Attention-based multiple instance learning (A-MIL)
+Multiplying each patch by its attention weight and stitching the patches back together reconstructs a localization map. A-MIL highlights the affected glands and ignores the background, while Grad-CAM on the same patches stays noisy:
 
-In this method, we have cropped an image in small square patches and made a bag of it. This bag of images will act like a batch. We are fee
-AMIL ArchitectureFirst making a bag of the input image by taking the small patches from it.
-Passing it to the feature extractor which is basically a convolutional neural network block.
-Then we are passing the Instance level features to the classifier for getting Instance level attention.
-Here we are getting the attention weights which we are further using for attention aggregation to get the bag level features.
+![Comparison of the visualization output of Grad-CAM and A-MIL](images/comparison.png)
 
-![The figure shows localization in sample malignant image using Attention - Multiple Instance Learning. A-MIL accurately highlights affected gland and ignores background region](https://dipeshtamboli.github.io/images/amil/amil_arc.png)
+The same method applied to the **BACH** dataset (bright = attended informative regions, dark = ignored background):
 
+![A-MIL localization on a BACH image](images/result.png)
 
-Then we are applying Dense layer for the classification of the Benign, Malignant or Invasiveconsidering the
+## Repository structure
 
-So in the end, we have cropped image patches and their attention weights. We multiplied each attention weight with the corresponding patch and stitch the whole image to get the visualization of the complete input image. With this method, we are neither compromising the accuracy nor made the model complicated. This is just adding transparency to the whole process.
+| Path | Description |
+|------|-------------|
+| `my_network/` | Custom CNN architecture — `net.py` |
+| `ResNet/` | Transfer learning with a pretrained ResNet — `resnet_pre.py` |
+| `VGG/` | Transfer learning with a pretrained VGG — `vgg_pre.py` |
+| `AMIL_codes/` | Attention-based MIL — model (`amil_model.py`), patch/bag loader (`patch_data.py`), train + test (`train_n_test.py`) |
+| `grad_cam/` | Grad-CAM / Guided Grad-CAM visualization toolkit |
+| `AMIL_Data/` | Expected data layout for A-MIL (`readme_data_format.txt`) |
 
-![The figure shows localization in sample malignant image using Attention - Multiple Instance Learning. A-MIL accurately highlights affected gland and ignores background region](https://dipeshtamboli.github.io/images/amil/amil.png)
+## How to run the code
 
+Each model folder trains on the chosen magnification (zoom) level and saves the model, terminal logs, TensorBoard logs and a run summary into the corresponding zoom-level folder.
 
-This is the comparison between the visualization of GradCAM and AMIL method. Here we cropped two portions from the image which is important for the classification and applied GradCAM on it. In another scene, AMIL visualization is there which is properly highlighting the useful portion.
-Comparison of the visualization output of GradCAM and A-MILAnother result of AMIL visualization of BACH image.
+- **Custom network:** `cd my_network && python net.py`
+- **ResNet (pretrained):** `cd ResNet && python resnet_pre.py`
+- **VGG (pretrained):** `cd VGG && python vgg_pre.py`
+- **Attention MIL:** `cd AMIL_codes && python train_n_test.py` — trains A-MIL, tests it, and saves the patch-stitched visualizations.
 
+Each folder also contains `run_for_all_zoom.sh`, which loops the corresponding script over all magnifications (40X, 100X, 200X, 400X):
 
-![Another result from the BACH dataset.](https://dipeshtamboli.github.io/images/amil/result.png)
+```bash
+bash run_for_all_zoom.sh
+```
 
-***********************
+**Grad-CAM visualization:** put a test image in `grad_cam/inputs/`, set its filename in `grad_cam/src/misc_functions.py` (around line 253), then run `python grad_cam/src/guided_gradcam.py`. Results are written to `grad_cam/results/`.
 
-[Same article is also available on Medium](https://medium.com/@dipeshtamboli/a-sota-method-for-visualization-of-histopathology-images-1cc6cc3b76f3)   
-And also on [my blog](https://dipeshtamboli.github.io/blog/2019/Visualization-of-Histopathology-images/)
+## Dataset
 
-<button style="background-color:azure;color:white;width:200px;
-height:40px;">[Arxiv link](https://arxiv.org/abs/2003.00823)</button> | <button style="background-color:azure;color:white;width:240px;
-height:40px;">[IEEE Xplore link](https://ieeexplore.ieee.org/abstract/document/9019916)</button> | <button style="background-color:azure;color:white;width:300px;
-height:40px;">[Harvard digital library link](https://ui.adsabs.harvard.edu/abs/2020arXiv200300823P/abstract)</button>
+**BreakHis** (used by the ResNet / VGG / custom-network models):
 
-***********************
+- Official source: [Breast Cancer Histopathological Database (BreakHis), UFPR](https://web.inf.ufpr.br/vri/databases/breast-cancer-histopathological-database-breakhis/)
+- Also on Kaggle: [BreakHis dataset](https://www.kaggle.com/datasets/ambarish/breakhis)
 
+**A-MIL data layout:** for attention-based MIL, re-arrange the dataset into the structure described in [`AMIL_Data/readme_data_format.txt`](AMIL_Data/readme_data_format.txt):
 
-# How to run the code
+```
+data_breakhis/
+  40X/  100X/  200X/  400X/
+    train/
+      0/   (benign images)
+      1/   (malignant images)
+    test/
+      0/   1/
+```
 
-Here, in the folder AMIL_project, we have following folders:
+## Requirements
 
-## my_network
-	-In this, we have trained a model using this dataset on our own architecture. Accuracies are comparable to the VGG_pretrained and ResNet_pretrained model.
-	-In this folder, we have
-		-net.py
-			-use "python net.py" to run the code(without quotes)
-			-this is the code which will train the model, and test it on the validation set
-			-this code will save following things in corresponding zoom level folder
-				-model(in pickel and pytorch format)
-				-terminal logs
-				-tensorboard run logs
-				-text file summarizing the run
-		-run_for_all_zoom.sh
-			- use "bash run_for_all_zoom.sh" to run this script(without quotes)
-			- this script will run vgg_pre.py for all the zoom level and for all the epochs
-			- u can keep the number of epoch = 10	
-## ResNet
-	-In this, we have used a pre-trained ResNet model and trained last fully connected layer using this dataset.
-	-In this folder, we have
-		-resnet_pre.py
-			-use "python resnet_pre.py" to run the code(without quotes)
-			-this is the code which will train the model, and test it on the validation set
-			-this code will save following things in corresponding zoom level folder
-				-model(in pickel and pytorch format)
-				-terminal logs
-				-tensorboard run logs
-				-text file summarizing the run
-		-run_for_all_zoom.sh
-			- use "bash run_for_all_zoom.sh" to run this script(without quotes)
-			- this script will run vgg_pre.py for all the zoom level and for all the epochs
-			- u can keep the number of epoch = 10	
-## VGG
-	-In this, we have used a pre-trained VGG model and trained last fully connected layer using this dataset.
-	-In this folder, we have
-		-vgg_pre.py
-			-use "python vgg_pre.py" to run the code(without quotes)
-			-this is the code which will train the model, and test it on the validation set
-			-this code will save following things in corresponding zoom level folder
-				-model(in pickel and pytorch format)
-				-terminal logs
-				-tensorboard run logs
-				-text file summarizing the run
-		-run_for_all_zoom.sh
-			- use "bash run_for_all_zoom.sh" to run this script(without quotes)
-			- this script will run vgg_pre.py for all the zoom level and for all the epochs
-			- u can keep the number of epoch = 10	
+> **Note:** this code was developed in 2019 on an older stack — **PyTorch 0.4.1, torchvision 0.2.1, TensorFlow 1.13.1** (see [`requirement.txt`](requirement.txt)). These pins no longer install on modern Python; to reproduce the original results, use a matching legacy environment (e.g. Python 3.6). Porting to a current PyTorch is straightforward but has not been re-validated here.
 
-## AMIL_codes
-	-In this folder, we have
-		-amil_model.py
-			-it contains attention model(architecture)
-		-patch_data.py
-			-data loader (takes images as input and crop it to 28*28 and creates a bag)
-		-train_n_test.py
-			-use "python train_n_test.py" to run the code(without quotes)
-			-code which trains the AMIL and then test it on the validation set and saves visualization in the AMIL_visualization folder
-			-this code will save following things in corresponding zoom level folder
-				-model(pytorch format)
-				-terminal logs
-				-tensorboard run logs
-				-text file summarizing the run			
-				-visualization of test images
-		-run_for_all_zoom.sh
-			- use "bash run_for_all_zoom.sh" to run this script(without quotes)
-			- this script will run vgg_pre.py for all the zoom level and for all the epochs
-			- u can keep the number of epoch = 20	
+## Links
 
-## grad_cam
-	-In this folder, we have "inputs" folder where you have to put test image
-	-In folder "src", in misc_functions.py, on line number 253, you have to put the name of test image
-	-run the code "python guided_gradcam.py" without quotes.
-	-this will produce resultant visualization images in "results" folder
+- [Article on Medium](https://medium.com/@dipeshtamboli/a-sota-method-for-visualization-of-histopathology-images-1cc6cc3b76f3)
+- [arXiv:2003.00823](https://arxiv.org/abs/2003.00823) · [IEEE Xplore](https://ieeexplore.ieee.org/abstract/document/9019916) · [Harvard ADS](https://ui.adsabs.harvard.edu/abs/2020arXiv200300823P/abstract)
 
-## Kaggle_Data:
-we are using Breakhis dataset from the Kaggle datasets(link to the dataset)   
--download the dataset from the following link:
-[Kaggle Dataset](https://www.kaggle.com/kritika397/breast-cancer-dataset-from-breakhis/downloads/fold1.zip/1)  
--rename it to Kaggle_Data   
--We will use this data for Resnet architecture, vgg architecture and mynet architecture   
+## Citation
 
-## AMIL_Data:
-	-Here, for attention based multiple instance learning, we will re-arrange the dataset in the given format(readme_data_format.txt)
+```bibtex
+@INPROCEEDINGS{9019916,
+  author={Patil, Abhijeet and Tamboli, Dipesh and Meena, Sunil and Anand, Deepak and Sethi, Amit},
+  booktitle={2019 IEEE International WIE Conference on Electrical and Computer Engineering (WIECON-ECE)},
+  title={Breast Cancer Histopathology Image Classification and Localization using Multiple Instance Learning},
+  year={2019},
+  pages={1-4},
+}
+```
 
-###	Here, dataset is in this structure:
-		fold1
-			-test
-				-100X
-					-B_100X
-						-(images)
-					-M_100X
-						-(images)
-				-200X
-					-B_200X
-						-(images)
-					-M_200X
-						-(images)
-				-400X
-					-B_400X
-						-(images)
-					-M_400X
-						-(images)
-				-40X
-					-B_40X
-						-(images)
-					-M_40X
-						-(images)
-			-train
-				-100X
-					-B_100X
-						-(images)
-					-M_100X
-						-(images)
-				-200X
-					-B_200X
-						-(images)
-					-M_200X
-						-(images)
-				-400X
-					-B_400X
-						-(images)
-					-M_400X
-						-(images)
-				-40X
-					-B_40X
-						-(images)
-					-M_40X
-						-(images)
+Plain text: A. Patil, D. Tamboli, S. Meena, D. Anand and A. Sethi, "Breast Cancer Histopathology Image Classification and Localization using Multiple Instance Learning," *2019 IEEE International WIE Conference on Electrical and Computer Engineering (WIECON-ECE)*, Bangalore, India, 2019, pp. 1-4.
 
-###	Now, we have to convert it in the following format:
-		data_breakhis
-			-100X
-				-train
-					-0
-						-images
-					-1
-						-images
-				-test
-					-0
-						-images
-					-1
-						-images				
-			-200X
-				-train
-					-0
-						-images
-					-1
-						-images
-				-test
-					-0
-						-images
-					-1
-						-images							
-			-400X
-				-train
-					-0
-						-images
-					-1
-						-images
-				-test
-					-0
-						-images
-					-1
-						-images							
-			-40X
-				-train
-					-0
-						-images
-					-1
-						-images
-				-test
-					-0
-						-images
-					-1
-						-images							
-	-rearrange the folders and rename it to AMIL_Data
+## License
 
-
-************************************************
-To cite this:   
-Plain Text:   
-A. Patil, D. Tamboli, S. Meena, D. Anand and A. Sethi, "Breast Cancer Histopathology Image Classification and Localization using Multiple Instance Learning," 2019 IEEE International WIE Conference on Electrical and Computer Engineering (WIECON-ECE), Bangalore, India, 2019, pp. 1-4.
-
-BibTex:   
-@INPROCEEDINGS{9019916,  author={A. {Patil} and D. {Tamboli} and S. {Meena} and D. {Anand} and A. {Sethi}},  booktitle={2019 IEEE International WIE Conference on Electrical and Computer Engineering (WIECON-ECE)},  title={Breast Cancer Histopathology Image Classification and Localization using Multiple Instance Learning},   year={2019},  volume={},  number={},  pages={1-4},}
+Released under the [MIT License](LICENSE).
