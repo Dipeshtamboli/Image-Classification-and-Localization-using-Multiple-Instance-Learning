@@ -4,7 +4,7 @@ This programs helps to test the grad_cam on different examples
 author: Dipesh Tamboli - https://github.com/Dipeshtamboli
 author: Parth Patil    - https://github.com/Parth1811
 """
-# sftp://test1@10.107.42.42/home/Drive2/amil/my_network/net.py
+# my_network/net.py
 import numpy as np
 from misc_functions import (get_example_params, convert_to_grayscale, save_gradient_images)
 from gradcam import GradCam
